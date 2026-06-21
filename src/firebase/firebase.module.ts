@@ -23,17 +23,20 @@ const firebaseAppProvider = {
     if (getApps().length > 0) {
       return getApp();
     }
-    const serviceAccountPath = path.resolve(
-      process.cwd(),
-      'firebase-service-account.json',
-    );
+    // const serviceAccountPath = path.resolve(
+    //   process.cwd(),
+    //   'firebase-service-account.json',
+    // );
     // Explicitly pass projectId from service account to ensure it doesn't try
     // to guess it from the environment incorrectly.
-    const serviceAccount = require(serviceAccountPath);
-    
+    // const serviceAccount = require(serviceAccountPath);
+
     return initializeApp({
-      credential: cert(serviceAccountPath),
-      projectId: serviceAccount.project_id,
+      credential: cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
     });
   },
 };
